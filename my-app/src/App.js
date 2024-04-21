@@ -1,25 +1,39 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
 
-function App() {
+function ImageUploader() {
+  const [image, setImage] = useState(null);
+
+  const handleImageUpload = (event) => {
+    const uploadedImage = event.target.files[0];
+    setImage(URL.createObjectURL(uploadedImage));
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div style={{ textAlign: 'center', marginTop: '20px' }}>
+      <h2>1st place winner</h2>
+      <input 
+        type="file" 
+        accept="image/*" 
+        onChange={handleImageUpload} 
+        style={{ marginBottom: '20px' }} 
+      />
+      {image && (
+        <div>
+          <h3>Plant:</h3>
+          <img 
+            src={image} 
+            alt="Uploaded" 
+            style={{ 
+              maxWidth: '100%', 
+              maxHeight: '400px', 
+              border: '1px solid #ccc', 
+              borderRadius: '5px' 
+            }} 
+          />
+        </div>
+      )}
     </div>
   );
 }
 
-export default App;
+export default ImageUploader;
