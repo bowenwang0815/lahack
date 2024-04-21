@@ -39,16 +39,9 @@
         };
       }
 
-      async function run() {
+      async function run(prompt, imageParts) {
         // For text-and-images input (multimodal), use the gemini-pro-vision model
         const model = genAI.getGenerativeModel({ model: "gemini-pro-vision" });
-
-        const prompt = "What's different between these pictures?";
-
-        const fileInputEl = document.querySelector("input[type=file]");
-        const imageParts = await Promise.all(
-          [...fileInputEl.files].map(fileToGenerativePart)
-        );
 
         const result = await model.generateContent([prompt, ...imageParts]);
         const response = await result.response;
@@ -56,7 +49,29 @@
         console.log(text);
       }
 
-      run();
+      // Function to handle image upload
+      async function handleImageUpload(event) {
+        const uploadedImage = event.target.files[0];
+        const base64EncodedDataPromise = new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result.split(',')[1]);
+          reader.readAsDataURL(uploadedImage);
+        });
+        const imagePart = {
+          inlineData: { data: await base64EncodedDataPromise, mimeType: uploadedImage.type },
+        };
+
+        const prompt = "What's different between these pictures?";
+        run(prompt, [imagePart]);
+      }
+
+      // Function to run when the page loads
+      function onPageLoad() {
+        const fileInputEl = document.querySelector("input[type=file]");
+        fileInputEl.addEventListener("change", handleImageUpload);
+      }
+
+      onPageLoad();
     </script>
   </body>
 </html>
